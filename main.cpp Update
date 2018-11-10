@@ -1,0 +1,152 @@
+BOOL CALLBACK TransformationDlgProc(HWND _hwnd,UINT _msg,WPARAM _wparam,LPARAM _lparam)
+{
+	 bool translation = false;
+	 bool rotation = false;
+	 bool projection = false;
+	 bool scaling = false;
+
+	 static int axisOfRot; //0 is x, 1 is y, 2 is z
+
+	 static float angle;
+	 static float distance;
+
+	 static float a11 = 1, a12 = 0, a13 = 0, a14 = 0;
+	 static float b11 = 0, b12 = 1, b13 = 0, b14 = 0;
+	 static float c11 = 0, c12 = 0, c13 = 1, c14 = 0;
+	 static float d11 = 0, d12 = 0, d13 = 0, d14 = 1;
+
+	 static float Edit1;
+	 static float Edit2;
+	 static float Edit3;
+	 static float Edit4;
+	 static float Edit5;
+	 static float Edit6;
+
+
+	 float arrayA1[16]{a11, a12, a13, a14, b11, b12, b13, b14, c11, c12, c13, c14, d11, d12, d13, d14};
+
+	 float arrayA[4][4]{ {a11,a12,a13,a14},
+						 {b11,b12,b13,b14},
+						 {c11,c12,c13,c14},
+						 {d11,d12,d13,d14} };
+
+
+
+	switch (_msg)
+	{
+	case WM_COMMAND:
+	{
+		switch (LOWORD(_wparam))
+		{
+
+		//X Scalar Value (a11)
+		case IDC_EDIT1: {
+		
+			Edit1 = ReadFromEditBox(_hwnd, IDC_EDIT1);
+			break;
+		}
+		//Y Scalar Value (b12)
+		case IDC_EDIT2: {
+
+			Edit2 = ReadFromEditBox(_hwnd, IDC_EDIT2);
+			break;
+		}
+		//Z Scalar Value (c13)
+		case IDC_EDIT3: {
+
+			Edit3 = ReadFromEditBox(_hwnd, IDC_EDIT3);
+			break;
+		}
+		//X Translation Value(a14)
+		case IDC_EDIT4: {
+			Edit4 = ReadFromEditBox(_hwnd, IDC_EDIT4);
+			
+			break;
+		}
+		//Y Translation Value(b14)
+		case IDC_EDIT5: {
+			Edit5 = ReadFromEditBox(_hwnd, IDC_EDIT5);
+			break;
+		}
+		//Z Translation Value(c14)
+		case IDC_EDIT6: {
+			Edit6 = ReadFromEditBox(_hwnd, IDC_EDIT6);
+			break;
+		}
+		//angle value for rotation
+		case IDC_EDIT13: {
+			angle = ReadFromEditBox(_hwnd, IDC_EDIT13);
+			break;
+		}
+		//projection distance
+		case IDC_EDIT15: {
+			distance = ReadFromEditBox(_hwnd, IDC_EDIT15);
+			break;
+		}
+
+
+		//Rotation about X Axis Checkbox
+		case IDC_CHECK1: {
+			axisOfRot = 0;
+
+			break;
+		}		
+		//Rotation about Y Axis Checkbox
+		case IDC_CHECK2: {
+			axisOfRot = 1;
+			break;
+		}
+		//Rotation about Z Axis Checkbox
+		case IDC_CHECK7: {
+			axisOfRot = 2;
+			break;
+		}
+
+
+		//Scaling and Skewing
+		case IDC_CHECK3: {
+			float box = 1047;
+			trans.Scaling(_hwnd, a11, b12, c13, Edit1, Edit2, Edit3, arrayA1, box);
+			break;
+		}
+		//Rotation
+		case IDC_CHECK4: {
+			trans.Rotation(_hwnd, axisOfRot, angle);
+			break;
+		}
+		//Projection
+		case IDC_CHECK5: {
+			trans.Projection(_hwnd, distance);
+			break;
+		}
+		//Translation
+		case IDC_CHECK6: {
+			trans.Translation(_hwnd, arrayA1, a14, b14, c14, Edit4, Edit5, Edit6);
+			break;
+		}
+		////compute button
+		case IDC_BUTTON4: {
+			
+			float box = 1047;
+			trans.Compute(_hwnd, box);
+			break;
+		}
+
+		default:
+			break;
+		}	
+		break;
+	}
+	case WM_CLOSE:
+	{
+		ShowWindow(_hwnd, SW_HIDE);
+		return TRUE;
+		break;
+	}
+
+	default:
+		break;
+	}
+		return FALSE;
+
+}
